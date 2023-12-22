@@ -59,6 +59,17 @@ async function run() {
       }
     });
 
+    app.get("/tasks/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await tasksCollection.findOne(query);
+        res.send(result);
+      } catch (err) {
+        res.status.send(400);
+      }
+    });
+
     app.delete("/tasks/:id", async (req, res) => {
       try {
         const id = req.params.id;
@@ -68,6 +79,25 @@ async function run() {
       } catch (err) {
         res.status.send(400);
       }
+    });
+
+    app.patch("/tasks/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedTask = req.body;
+
+      const filter = { _id: new ObjectId(id) };
+
+      const updatedDoc = {
+        $set: {
+          title: updatedTask?.title,
+          description: updatedTask?.description,
+          priority: updatedTask?.title,
+          date: updatedTask?.date,
+        },
+      };
+
+      const result = await tasksCollection.updateOne(filter, updatedDoc);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
