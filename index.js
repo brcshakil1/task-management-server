@@ -44,6 +44,22 @@ async function run() {
       }
     });
 
+    app.get("/tasks", async (req, res) => {
+      try {
+        const email = req.query.email;
+        let query = {};
+        if (email) {
+          query.userEmail = email;
+        }
+        console.log(query);
+
+        const result = await tasksCollection.find(query).toArray();
+        res.send(result);
+      } catch (err) {
+        res.status(400).send;
+      }
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
